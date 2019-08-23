@@ -21,20 +21,7 @@ public class program {
 //		NueralNet nn = NueralNet.load_nn();
 
 		// predict 50000 examples and show accuracy
-		System.out.print("\nFeeding forward all examples...");
-		long start = System.nanoTime();
-		boolean[] answers = new boolean[50000];
-		for (int i = 0; i < 50000; i++) {
-			answers[i] = nn.predict(data[i]).argmax() == labels[i];
-		}
-		System.out.println("\t" + (System.nanoTime() - start) / 1000000000.0 + " seconds.");
-		int correct = 0;
-		for (int i = 0; i < 50000; i++) {
-			if (answers[i])
-				correct++;
-		}
-		System.out.println("The network got " + correct + " examples correct, which is " + (double) correct / 500.0
-				+ "% accuracy");
+		testAll(nn, data, labels);
 		
 		// predict 1 example, show cost function
 		System.out.println("\nTesting one example...");
@@ -52,6 +39,23 @@ public class program {
 		
 		// end
 		System.out.println("\nEnd.");
+	}
+	
+	private static void testAll(NueralNet nn, double[][] data, int[] labels) {
+		System.out.print("\nFeeding forward all examples...");
+		long start = System.nanoTime();
+		boolean[] answers = new boolean[50000];
+		for (int i = 0; i < 50000; i++) {
+			answers[i] = nn.predict(data[i]).argmax() == labels[i];
+		}
+		System.out.println("\t" + (System.nanoTime() - start) / 1000000000.0 + " seconds.");
+		int correct = 0;
+		for (int i = 0; i < 50000; i++) {
+			if (answers[i])
+				correct++;
+		}
+		System.out.println("The network got " + correct + " examples correct, which is " + (double) correct / 500.0
+				+ "% accuracy");
 	}
 }
 

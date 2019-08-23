@@ -46,24 +46,6 @@ public class NueralNet implements Serializable {
 		}
 	}
 
-	public void saveMe() throws IOException {
-		FileOutputStream fos = new FileOutputStream(
-				"/Users/averychan/eclipse-workspace/Backpropagation Nueral Network/src/mynueralnet.ser");
-		ObjectOutputStream oos = new ObjectOutputStream(fos);
-		oos.writeObject(this);
-		oos.close();
-		System.out.println("Object saved.");
-	}
-
-	public static NueralNet load_nn() throws IOException, ClassNotFoundException {
-		FileInputStream fis;
-		fis = new FileInputStream(
-				"/Users/averychan/eclipse-workspace/Backpropagation Nueral Network/src/mynueralnet.ser");
-		ObjectInputStream ois = new ObjectInputStream(fis);
-		ois.close();
-		return (NueralNet) ois.readObject();
-	}
-
 	/**
 	 * Returns the output DoubleMatrix for input vector a
 	 * 
@@ -129,6 +111,24 @@ public class NueralNet implements Serializable {
 		}
 		System.out.println(weights[2].toString());
 		System.out.println(w_grad[2].toString());
+	}
+	
+	public void saveMe() throws IOException {
+		FileOutputStream fos = new FileOutputStream(
+				"/Users/averychan/eclipse-workspace/Backpropagation Nueral Network/src/mynueralnet.ser");
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(this);
+		oos.close();
+		System.out.println("Object saved.");
+	}
+
+	public static NueralNet load_nn() throws IOException, ClassNotFoundException {
+		FileInputStream fis;
+		fis = new FileInputStream(
+				"/Users/averychan/eclipse-workspace/Backpropagation Nueral Network/src/mynueralnet.ser");
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		ois.close();
+		return (NueralNet) ois.readObject();
 	}
 
 	/**

@@ -35,7 +35,7 @@ public class ReadData {
 		long start = System.nanoTime();
 
 		// Setup
-		String fileName = "/Users/averychan/eclipse-workspace/Backpropagation Nueral Network/src/training-set-images.bin";
+		String fileName = "/Users/averychan/eclipse-workspace/Backpropagation Neural Network/src/training-set-images.bin";
 		File file = new File(fileName);
 		BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
 		double[][] input = new double[50000][784];
@@ -73,7 +73,7 @@ public class ReadData {
 		File file;
 		BufferedInputStream inputStream;
 
-		fileName = "/Users/averychan/eclipse-workspace/Backpropagation Nueral Network/src/training-set-labels.bin";
+		fileName = "/Users/averychan/eclipse-workspace/Backpropagation Neural Network/src/training-set-labels.bin";
 		file = new File(fileName);
 
 		inputStream = new BufferedInputStream(new FileInputStream(file));
