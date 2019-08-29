@@ -22,25 +22,25 @@ public class program {
 
 		// predict 50000 examples and show accuracy
 		testAll(nn, data, labels);
-		
+
 		// predict 1 example, show cost function
 		System.out.println("\nTesting one example...");
-		DoubleMatrix out_ex0 = nn.predict(data[0]); // TODO eventually you dont want doublematrix in this class
-		System.out.println("Correct answer: " + labels[0]);
+		DoubleMatrix out_ex0 = nn.predict(data[0]); // TODO eventually you dont want doublematrix in this class; Only have it here to print out
 		System.out.println(out_ex0.toString());
+		System.out.println("Correct answer: " + labels[0]);
 		System.out.println("Predicted answer: " + out_ex0.argmax());
 		System.out.println("Cost: " + NueralNet.cost(out_ex0, labels[0]));
 
 		// save nueral net
 //		nn.saveMe();
-		
+
 		// back prop?
 		nn.backprop(labels[0]);
-		
+
 		// end
 		System.out.println("\nEnd.");
 	}
-	
+
 	private static void testAll(NueralNet nn, double[][] data, int[] labels) {
 		System.out.print("\nFeeding forward all examples...");
 		long start = System.nanoTime();
