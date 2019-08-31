@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import org.jblas.DoubleMatrix;
@@ -16,7 +15,7 @@ public class NueralNet implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	int[] shape;
-	DoubleMatrix[] weights, biases, activations; // weights -> 2d, biases -> 1d, activations -> 1d
+	DoubleMatrix[] weights, biases, activations, w_grad, b_grad; // weights -> 2d, biases -> 1d, activations -> 1d
 
 	/**
 	 * Constructor to make a new nueral network of the size specified by int[] shape and randomizes weights and biases
@@ -45,6 +44,12 @@ public class NueralNet implements Serializable {
 		for (int i = 0; i < shape.length - 1; i++) {
 			biases[i] = DoubleMatrix.zeros(shape[i + 1]);
 		}
+		
+		// set blank activation matricy
+		this.activations = new DoubleMatrix[shape.length];
+		for (int i = 0; i < activations.length; i++) {
+			activations[i] = new DoubleMatrix(shape[i]);
+		}
 	}
 
 	/**
@@ -54,12 +59,6 @@ public class NueralNet implements Serializable {
 	 * @return
 	 */
 	public DoubleMatrix predict(double[] a) {
-		// Set activation matricies
-		this.activations = new DoubleMatrix[shape.length];
-		for (int i = 0; i < activations.length; i++) {
-			activations[i] = new DoubleMatrix(shape[i]);
-		}
-
 		activations[0] = new DoubleMatrix(a);
 
 		// iterate through all layers
@@ -82,7 +81,7 @@ public class NueralNet implements Serializable {
 	}
 
 	public void backprop(int ans) {
-		DoubleMatrix[] w_grad, b_grad;
+//		DoubleMatrix[] w_grad, b_grad;
 
 		// create DoubleMatrix for weight gradients
 		w_grad = new DoubleMatrix[weights.length];
@@ -100,8 +99,11 @@ public class NueralNet implements Serializable {
 			}
 		}
 
-		System.out.println("Activation parials...");
+//		System.out.println("\nCalculating Activation Partials...");
 
+//		System.out.println(Arrays.toString(shape));
+//		System.out.println(Arrays.toString(activations));
+		
 		// calc partial a for each layer
 		double[][] a_par = new double[shape.length][];
 
@@ -111,7 +113,9 @@ public class NueralNet implements Serializable {
 			temp_ap[i] = 2 * (activations[activations.length - 1].get(i) - expected[i]);
 		}
 
-		a_par[0] = temp_ap;
+		a_par[3] = temp_ap;
+		
+//		System.out.println(Arrays.toString(temp_ap));
 
 //		System.out.println("a_par\n"+Arrays.deepToString(a_par));
 
@@ -123,24 +127,8 @@ public class NueralNet implements Serializable {
 		double foo = 0;
 		for (int j = 0; j < shape[shape.length - 2]; j++) {
 			for (int n = 0; n < shape[shape.length - 1]; n++) {
-				foo += a_par[0][n] * activations[activations.length - 1].get(n)
+				foo += a_par[3][n] * activations[activations.length - 1].get(n)
 						* (1 - activations[activations.length - 1].get(n)) * weights[2].get(j, n);
-			}
-			temp_ap[j] = foo;
-			foo = 0;
-		}
-
-		a_par[1] = temp_ap;
-
-//		System.out.println("a_par\n"+Arrays.deepToString(a_par));
-
-		// layer L-2
-		temp_ap = new double[shape[shape.length - 3]];
-		foo = 0;
-		for (int j = 0; j < shape[shape.length - 3]; j++) {
-			for (int n = 0; n < shape[shape.length - 2]; n++) {
-				foo += a_par[1][n] * activations[activations.length - 2].get(n)
-						* (1 - activations[activations.length - 2].get(n)) * weights[1].get(j, n);
 			}
 			temp_ap[j] = foo;
 			foo = 0;
@@ -149,6 +137,39 @@ public class NueralNet implements Serializable {
 		a_par[2] = temp_ap;
 
 //		System.out.println("a_par\n"+Arrays.deepToString(a_par));
+
+		// layer L-2
+		temp_ap = new double[shape[shape.length - 3]];
+		foo = 0;
+		for (int j = 0; j < shape[shape.length - 3]; j++) {
+			for (int n = 0; n < shape[shape.length - 2]; n++) {
+				foo += a_par[2][n] * activations[activations.length - 2].get(n)
+						* (1 - activations[activations.length - 2].get(n)) * weights[1].get(j, n);
+			}
+			temp_ap[j] = foo;
+			foo = 0;
+		}
+		
+		a_par[1] = temp_ap;
+		
+		// layer L-3
+				temp_ap = new double[shape[shape.length - 4]];
+				foo = 0;
+				for (int j = 0; j < shape[shape.length - 4]; j++) {
+					for (int n = 0; n < shape[shape.length - 3]; n++) {
+						foo += a_par[1][n] * activations[activations.length - 3].get(n)
+								* (1 - activations[activations.length - 3].get(n)) * weights[0].get(j, n);
+					}
+					temp_ap[j] = foo;
+					foo = 0;
+				}
+
+		a_par[0] = temp_ap;
+
+//		System.out.println("a_par\n"+Arrays.deepToString(a_par));
+//		System.out.println(Arrays.toString((a_par[0])));
+//		System.out.println(Arrays.toString((a_par[1])));
+//		System.out.println(Arrays.toString((a_par[2])));
 
 		// layer L-3
 		temp_ap = new double[shape[shape.length - 4]];
@@ -162,36 +183,140 @@ public class NueralNet implements Serializable {
 			foo = 0;
 		}
 
-		a_par[3] = temp_ap;
+		a_par[0] = temp_ap;
 
 //		System.out.println("a_par\n"+Arrays.deepToString(a_par));
 
-		System.out.println("Activation partials done.\nWeight partials...");
+//		System.out.println("Done.\nCalculating Weight partials...");
 
 		// calc weight partials
-
-		// layer 1
-		
-		DoubleMatrix temp_wp = new DoubleMatrix();
+		DoubleMatrix temp_dm_par = new DoubleMatrix();
 		foo = 0;
-		
-		temp_wp.copy(weights[weights.length-1]);
-		for (int j=0; j<temp_wp.rows; j++) {
-			for (int k=0; k<temp_wp.columns; k++) {
-				foo = activations[activations.length-2].get(k)*activations[activations.length-1].get(j)*(1-activations[activations.length-1].get(j))*a_par[a_par.length-1][j];
-				temp_wp.put(j, k, foo);
+
+		// layer L
+		temp_dm_par.copy(weights[weights.length - 1]);
+
+		for (int j = 0; j < temp_dm_par.rows; j++) {
+			for (int k = 0; k < temp_dm_par.columns; k++) {
+				foo = activations[activations.length - 2].get(k) * activations[activations.length - 1].get(j)
+						* (1 - activations[activations.length - 1].get(j)) * a_par[a_par.length - 1][j];
+				temp_dm_par.put(j, k, foo);
 			}
 		}
+
+		w_grad[2].copy(temp_dm_par);
+//		System.out.println(weights[weights.length-1].length);
+//		System.out.println(w_grad[0].length); // needs to be bigger?
+
+		// layer L-1
+
+		foo = 0;
+
+		temp_dm_par.copy(weights[weights.length - 2]);
+		for (int j = 0; j < temp_dm_par.rows; j++) {
+			for (int k = 0; k < temp_dm_par.columns; k++) {
+				foo = activations[activations.length - 3].get(k) * activations[activations.length - 2].get(j)
+						* (1 - activations[activations.length - 2].get(j)) * a_par[a_par.length - 2][j];
+				temp_dm_par.put(j, k, foo);
+			}
+		}
+
+		w_grad[1].copy(temp_dm_par);
+
+		// layer L-2
+
+		foo = 0;
+
+		temp_dm_par.copy(weights[weights.length - 3]);
+		for (int j = 0; j < temp_dm_par.rows; j++) {
+			for (int k = 0; k < temp_dm_par.columns; k++) {
+				foo = activations[activations.length - 4].get(k) * activations[activations.length - 3].get(j)
+						* (1 - activations[activations.length - 3].get(j)) * a_par[a_par.length - 3][j];
+				temp_dm_par.put(j, k, foo);
+			}
+		}
+
+		w_grad[0].copy(temp_dm_par);
+
+//		System.out.println("Done.");
+//		System.out.println(Arrays.deepToString(w_grad));
+//		for (int i = 0; i < w_grad.length; i++) {
+//			System.out.print(i + ": " + w_grad[i].length + " ");
+//		}
+//		System.out.println();
+
+		// Clac bias partials
+
+		b_grad = new DoubleMatrix[biases.length];
+		for (int i = 0; i < biases.length; i++) {
+			b_grad[i] = biases[i].dup();
+		}
+
+//		System.out.println("Calculating bias partials...");
+
+		temp_dm_par = new DoubleMatrix();
+		foo = 0;
+
+		// layer L
+		temp_dm_par.copy(biases[biases.length - 1]);
+
+		for (int j = 0; j < temp_dm_par.rows; j++) {
+			foo = activations[activations.length - 1].get(j) * (1 - activations[activations.length - 1].get(j))
+					* a_par[a_par.length - 1][j];
+			temp_dm_par.put(j, foo);
+		}
+
+		b_grad[2].copy(temp_dm_par);
+//		System.out.println(biases[biases.length-1].length);
+//		System.out.println(b_grad[0].length); // needs to be bigger?
+
+		// layer L-1
+
+		foo = 0;
+
+		temp_dm_par.copy(biases[biases.length - 2]);
+		for (int j = 0; j < temp_dm_par.rows; j++) {
+			foo = activations[activations.length - 2].get(j) * (1 - activations[activations.length - 2].get(j))
+					* a_par[a_par.length - 2][j];
+			temp_dm_par.put(j, foo);
+		}
+
+		b_grad[1].copy(temp_dm_par);
+
+		// layer L-2
+
+		foo = 0;
+
+		temp_dm_par.copy(biases[biases.length - 3]);
+		for (int j = 0; j < temp_dm_par.rows; j++) {
+			foo = activations[activations.length - 3].get(j) * (1 - activations[activations.length - 3].get(j))
+					* a_par[a_par.length - 3][j];
+			temp_dm_par.put(j, foo);
+		}
+
+		b_grad[0].copy(temp_dm_par);
+
+//		System.out.println("Done.");
+
+//		System.out.print("Applying gradient");
+
+//		System.out.println(Arrays.deepToString(biases));
+//		System.out.println(Arrays.deepToString(b_grad));
 		
-		w_grad[0] = temp_wp;
-		
-		System.out.println(Arrays.deepToString(w_grad));
+		for (int i = 0; i < weights.length; i++) {
+			weights[i] = weights[i].add(w_grad[i].neg());
+		}
+		for (int i = 0; i < biases.length; i++) {
+			biases[i] = biases[i].add(b_grad[i].neg());
+		}
+//		System.out.println("Done");
+//		System.out.println(Arrays.deepToString(biases));
 
 	}
 
 	public void saveMe() throws IOException {
 		FileOutputStream fos = new FileOutputStream(
-				"/Users/averychan/eclipse-workspace/Backpropagation Nueral Network/src/mynueralnet.ser");
+				"/Users/averychan/eclipse-workspace/Backpropagation Neural Network/src/mynueralnet.ser");
 		ObjectOutputStream oos = new ObjectOutputStream(fos);
 		oos.writeObject(this);
 		oos.close();
@@ -201,10 +326,11 @@ public class NueralNet implements Serializable {
 	public static NueralNet load_nn() throws IOException, ClassNotFoundException {
 		FileInputStream fis;
 		fis = new FileInputStream(
-				"/Users/averychan/eclipse-workspace/Backpropagation Nueral Network/src/mynueralnet.ser");
+				"/Users/averychan/eclipse-workspace/Backpropagation Neural Network/src/mynueralnet.ser");
 		ObjectInputStream ois = new ObjectInputStream(fis);
+		NueralNet nn = (NueralNet) ois.readObject();
 		ois.close();
-		return (NueralNet) ois.readObject();
+		return nn;
 	}
 
 	/**

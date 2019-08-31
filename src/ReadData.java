@@ -30,7 +30,7 @@ public class ReadData {
 	 * @throws IOException
 	 */
 	static double[][] getDigits() throws FileNotFoundException, IOException {
-		System.out.print("Getting data...");
+//		System.out.print("Getting data...");
 
 		long start = System.nanoTime();
 
@@ -54,7 +54,7 @@ public class ReadData {
 
 			}
 		}
-		
+
 		System.out.println("\t" + (System.nanoTime() - start) / 1000000000.0 + " seconds.");
 
 		inputStream.close();

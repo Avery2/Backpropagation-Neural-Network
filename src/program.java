@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.jblas.DoubleMatrix;
 
@@ -16,27 +17,42 @@ public class program {
 		// new nueral net
 		int[] layer_sizes = { 784, 16, 16, 10 };
 		NueralNet nn = new NueralNet(layer_sizes);
-		
+
 		// load nueral net
 //		NueralNet nn = NueralNet.load_nn();
+		NueralNet a = nn;
+		System.out.println("a==nn "+a.equals(nn));
+//		DoubleMatrix a = nn.weights[0];		
 
 		// predict 50000 examples and show accuracy
 		testAll(nn, data, labels);
 
 		// predict 1 example, show cost function
-		System.out.println("\nTesting one example...");
-		DoubleMatrix out_ex0 = nn.predict(data[0]); // TODO eventually you dont want doublematrix in this class; Only have it here to print out
-		System.out.println(out_ex0.toString());
-		System.out.println("Correct answer: " + labels[0]);
-		System.out.println("Predicted answer: " + out_ex0.argmax());
-		System.out.println("Cost: " + NueralNet.cost(out_ex0, labels[0]));
+//		System.out.println("\nTesting one example...");
+//		DoubleMatrix out_ex0 = nn.predict(data[0]); // TODO eventually you dont want doublematrix in this class; Only have it here to print out
+//		System.out.println(out_ex0.toString());
+//		System.out.println("Correct answer: " + labels[0]);
+//		System.out.println("Predicted answer: " + out_ex0.argmax());
+//		System.out.println("Cost: " + NueralNet.cost(out_ex0, labels[0]));
+
+		// back prop
+//		for (int i=0; i<labels.length; i++) {
+		for (int i=0; i<50000; i++) {
+			nn.predict(data[i]);
+			nn.backprop(labels[i]);
+			if (i%10000==0)
+				System.out.println(i);
+		}
+//		nn.backprop(labels[0]);
 
 		// save nueral net
-//		nn.saveMe();
+		nn.saveMe();
+		System.out.println(Arrays.toString(nn.w_grad));
+		testAll(nn, data, labels);
+		System.out.println("a==nn "+a.equals(nn));
 
-		// back prop?
-		nn.backprop(labels[0]);
-
+//		System.out.println("Same? "+a.equals(nn.weights[0]));
+		
 		// end
 		System.out.println("\nEnd.");
 	}
