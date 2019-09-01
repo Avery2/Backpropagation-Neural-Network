@@ -32,7 +32,7 @@ public class ReadData {
 	static double[][] getDigits() throws FileNotFoundException, IOException {
 //		System.out.print("Getting data...");
 
-		long start = System.nanoTime();
+//		long start = System.nanoTime();
 
 		// Setup
 		String fileName = "/Users/averychan/eclipse-workspace/Backpropagation Neural Network/src/training-set-images.bin";
@@ -55,7 +55,7 @@ public class ReadData {
 			}
 		}
 
-		System.out.println("\t" + (System.nanoTime() - start) / 1000000000.0 + " seconds.");
+//		System.out.println("\t" + (System.nanoTime() - start) / 1000000000.0 + " seconds.");
 
 		inputStream.close();
 		return input;

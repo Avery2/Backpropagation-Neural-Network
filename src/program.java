@@ -10,19 +10,16 @@ public class program {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
 		// Setup
-		System.out.println("Starting neural network...\n");
+		System.out.println("Starting neural network...");
 		double data[][] = ReadData.getDigits();
 		int labels[] = ReadData.getLabels();
 
 		// new nueral net
-		int[] layer_sizes = { 784, 16, 16, 10 };
-		NueralNet nn = new NueralNet(layer_sizes);
+//		int[] layer_sizes = { 784, 16, 16, 10 };
+//		NueralNet nn = new NueralNet(layer_sizes);
 
 		// load nueral net
-//		NueralNet nn = NueralNet.load_nn();
-		NueralNet a = nn;
-		System.out.println("a==nn "+a.equals(nn));
-//		DoubleMatrix a = nn.weights[0];		
+		NueralNet nn = NueralNet.load_nn();
 
 		// predict 50000 examples and show accuracy
 		testAll(nn, data, labels);
@@ -34,25 +31,25 @@ public class program {
 //		System.out.println("Correct answer: " + labels[0]);
 //		System.out.println("Predicted answer: " + out_ex0.argmax());
 //		System.out.println("Cost: " + NueralNet.cost(out_ex0, labels[0]));
+		
+		nn.saveMe();
 
 		// back prop
 //		for (int i=0; i<labels.length; i++) {
-		for (int i=0; i<50000; i++) {
+		for (int i = 0; i < 50000; i++) {
 			nn.predict(data[i]);
 			nn.backprop(labels[i]);
-			if (i%10000==0)
+			if (i % 10000 == 0)
 				System.out.println(i);
 		}
 //		nn.backprop(labels[0]);
 
 		// save nueral net
-		nn.saveMe();
-		System.out.println(Arrays.toString(nn.w_grad));
+//		nn.saveMe();
 		testAll(nn, data, labels);
-		System.out.println("a==nn "+a.equals(nn));
 
 //		System.out.println("Same? "+a.equals(nn.weights[0]));
-		
+
 		// end
 		System.out.println("\nEnd.");
 	}
