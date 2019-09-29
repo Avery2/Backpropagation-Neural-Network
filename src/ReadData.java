@@ -1,9 +1,14 @@
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * @author averychan
+ *
+ */
 public class ReadData {
 
   /**
@@ -31,8 +36,6 @@ public class ReadData {
    * @throws IOException
    */
   static double[][] getDigits() throws FileNotFoundException, IOException {
-    // System.out.print("Getting data...");
-
     // long start = System.nanoTime();
 
     // Setup
@@ -51,7 +54,6 @@ public class ReadData {
     // Read handwritten digits
     for (int i = 0; i < 50000; i++) {
       for (int j = 0; j < 784; j++) {
-        // input[i][j] = sigmoid(inputStream.read()); // BAD
         input[i][j] = inputStream.read();
 
       }
