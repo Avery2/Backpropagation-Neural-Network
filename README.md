@@ -1,8 +1,8 @@
 # Backpropagation-Nueral-Network
 
-This project was to make a neural network from scratch without libraries. It learned to classify handwritten digits from the MNIST database.
+Wrote this program the summer after graduating high school. It was the cumulation of basic programming skills I had into my first big project.
 
-This was a summer project. I didn't know how to use git correctly so its currently broken. At some point it learned to have about 15-20% accurancy which is better than the 10% you would get from guessing but is still pretty bad.
+This project was to make a neural network from scratch without libraries. It learned to classify handwritten digits from the MNIST database. I didn't know how to use git correctly so its currently broken. At some point it learned to have about 15-20% accurancy which is better than the 10% you would get from guessing but is still pretty bad.
 
 I used the following sources to learn:
 
